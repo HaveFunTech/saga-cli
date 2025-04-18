@@ -1,78 +1,173 @@
 # SaGaCLI
 
-SaGaCLI（サガCLI）は、LLM（Large Language Model）を活用するためのシンプルで強力なコマンドラインインターフェースです。OpenAIのGPT-3.5/GPT-4またはAnthropicのClaudeモデルを使用して、テキストの翻訳、要約、解説、検索などの機能を提供します。
+SaGaCLI is a simple yet powerful command-line interface for leveraging Large Language Models (LLMs). It can use OpenAI's GPT-3.5/GPT-4 or Anthropic's Claude models to provide translation, summarization, explanation, and search capabilities for text.
 
-## 特徴
+## Features
 
-- **複数のLLMサポート**: OpenAI（GPT-3.5/GPT-4）とClaude（Anthropic）の両方をサポート
-- **多様な機能**: 翻訳、要約、解説、検索など、さまざまな機能を提供
-- **柔軟な入力**: ファイルパスまたは標準入力からテキストを受け付け
-- **多言語対応**: 出力言語を自由に指定可能
+- **Multiple LLM Support**: Use either OpenAI (GPT-3.5/GPT-4) or Claude (Anthropic) models
+- **Diverse Functions**: Translation, summarization, explanation, search, and more
+- **Flexible Input**: Accept text from file paths or standard input
+- **Multilingual Support**: Specify any target language for output
 
-## インストール
+## Installation
 
-### 前提条件
+### Prerequisites
 
-- Go 1.16以上
+- Go 1.16 or higher
 
-### ソースからのインストール
-
-```bash
-# リポジトリをクローン
-git clone https://github.com/sa-giga/saga-cli.git
-cd saga-cli
-
-# ビルドとインストール
-make install
-```
-
-## 使い方
-
-SaGaCLIを使用する前に、必要な環境変数を設定する必要があります。
-
-### 環境変数の設定
-
-環境変数の設定方法については、`saga env`コマンドで詳細を確認できます。
+### Method 1: Binary Installation (Recommended)
 
 ```bash
-# OpenAI APIを使用する場合
-export OPENAI_API_KEY=your_api_key
-export OPENAI_API_MODEL=gpt-3.5-turbo  # オプション、デフォルトはgpt-3.5-turbo
+# Install Go if not installed
+$ brew install go  # macOS
+# or
+$ sudo apt install golang-go  # Ubuntu/Debian
 
-# Claude APIを使用する場合
-export OPENAI_API_TYPE=claude
-export CLAUDE_API_KEY=your_api_key
-export CLAUDE_API_MODEL=claude-3-haiku-20240307  # オプション
+# Install SaGaCLI
+$ go install github.com/sa-giga/saga-cli@latest
+
+# Add SaGaCLI to your path
+$ export PATH=$PATH:$(go env GOPATH)/bin
 ```
 
-### 基本的な使い方
+### Method 2: Building from Source
 
 ```bash
-# ファイルの内容を翻訳
-echo input.txt | saga --translation --lang ja
+# Clone the repository
+$ git clone https://github.com/sa-giga/saga-cli.git
+$ cd saga-cli
 
-# ファイルの内容を要約
-echo document.txt | saga --summary --lang en
-
-# ファイルの内容を解説
-echo code.py | saga --explanation --lang ja
-
-# クエリに基づいて情報を検索
-echo query.txt | saga --search --lang en
-
-# パイプを使用して直接テキストを入力
-cat README.md | saga --summary --lang ja
+# Build and install
+$ make build  # Creates binary at bin/saga
+$ make install  # Installs to your system
 ```
 
-より多くの使用例については、`saga examples`コマンドで確認できます。
+## Detailed Configuration
 
-## 機能一覧
+SaGaCLI can use either OpenAI's GPT-3.5/GPT-4 or Anthropic's Claude models. Set the appropriate environment variables based on the service you want to use.
 
-- **翻訳** (`--translation`): 指定された言語にテキストを翻訳します
-- **要約** (`--summary`): テキストの内容を簡潔にまとめます
-- **解説** (`--explanation`): テキストの内容について詳しく説明します
-- **検索** (`--search`): クエリに基づいて情報を提供します
+### Using OpenAI API
 
-## ライセンス
+```bash
+# Required settings
+export OPENAI_API_KEY=sk-...  # Your OpenAI API key
+export OPENAI_API_TYPE=openai  # API type (default)
+
+# Optional settings
+export OPENAI_API_BASE_URL=https://api.openai.com/v1  # Base URL (default)
+export OPENAI_API_VERSION=2023-05-15  # API version
+export OPENAI_API_MODEL=gpt-3.5-turbo  # Model to use (default: gpt-3.5-turbo)
+
+# For Azure OpenAI Service
+export OPENAI_API_TYPE=azure
+export OPENAI_API_BASE_URL=https://your-resource-name.openai.azure.com
+export OPENAI_API_KEY=your-azure-api-key
+export OPENAI_API_VERSION=2023-05-15
+export OPENAI_API_MODEL=your-deployment-name
+```
+
+### Using Anthropic Claude API
+
+```bash
+# Required settings
+export CLAUDE_API_KEY=sk-ant-...  # Your Anthropic API key
+export OPENAI_API_TYPE=claude  # Set API type to claude
+
+# Optional settings
+export CLAUDE_API_MODEL=claude-3-haiku-20240307  # Model to use (default)
+# Available models: claude-3-opus-20240229, claude-3-sonnet-20240229, claude-3-haiku-20240307, etc.
+```
+
+You can check your current settings by running the `saga env` command.
+
+## Detailed Usage
+
+### Basic Usage
+
+```bash
+# Process file content
+$ saga [options] < input_file
+
+# Or
+$ cat input_file | saga [options]
+
+# Direct text input from standard input (end with Ctrl+D)
+$ saga [options]
+Enter your text...
+[Ctrl+D]
+```
+
+### Main Options
+
+```bash
+--translation  # Translation mode
+--summary      # Summarization mode
+--explanation  # Explanation mode
+--search       # Search mode
+--lang [language_code]  # Specify output language (e.g., en, ja, fr, zh, etc.)
+```
+
+### Usage Examples
+
+```bash
+# Translate text to Japanese
+$ echo "Hello world" | saga --translation --lang ja
+
+# Summarize a long document in English
+$ cat document.txt | saga --summary --lang en
+
+# Explain program code
+$ cat code.py | saga --explanation --lang en
+
+# Search for information on a specific topic
+$ echo "Quantum computing basics" | saga --search --lang en
+
+# Translate a document to Japanese then summarize it
+$ cat english_doc.txt | saga --translation --lang ja | saga --summary --lang ja
+```
+
+### View Examples
+
+```bash
+# View various usage examples
+$ saga examples
+```
+
+## Troubleshooting
+
+### API Key Not Set Error
+
+```
+Error: OPENAI_API_KEY or CLAUDE_API_KEY is not set
+```
+
+If you see this error, check that your environment variables are correctly set.
+
+### Model Selection
+
+If processing is slow or you need higher quality results, select a more powerful model via environment variables:
+
+```bash
+# For OpenAI
+export OPENAI_API_MODEL=gpt-4
+
+# For Claude
+export CLAUDE_API_MODEL=claude-3-opus-20240229
+```
+
+## Getting Help
+
+```bash
+# Display command help
+$ saga --help
+
+# Display version information
+$ saga --version
+
+# Check environment settings
+$ saga env
+```
+
+## License
 
 MIT License
