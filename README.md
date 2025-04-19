@@ -5,7 +5,7 @@ SaGaCLI is a simple yet powerful command-line interface for leveraging Large Lan
 ## Features
 
 - **Multiple LLM Support**: Use OpenAI (GPT-3.5/GPT-4), Claude (Anthropic), or Gemini (Google) models
-- **Diverse Functions**: Translation, summarization, explanation, search, and more
+- **Diverse Functions**: Translation, summarization, explanation, search, custom messages, and more
 - **Flexible Input**: Accept text from file paths or standard input
 - **Multilingual Support**: Specify any target language for output
 
@@ -116,6 +116,7 @@ Enter your text...
 --summary      # Summarization mode
 --explanation  # Explanation mode
 --search       # Search mode
+--message      # Custom message mode (send specific instructions)
 --lang [language_code]  # Specify output language (e.g., en, ja, fr, zh, etc.)
 ```
 
@@ -133,6 +134,12 @@ $ cat code.py | saga --explanation --lang en
 
 # Search for information on a specific topic
 $ echo "Quantum computing basics" | saga --search --lang en
+
+# Extract name field from JSON data
+$ cat document.json | saga --message "Extract the name value" --lang en
+
+# Calculate average of age column in CSV data
+$ cat document.csv | saga --message "Calculate the average of the age column" --lang en
 
 # Translate a document to Japanese then summarize it
 $ cat english_doc.txt | saga --translation --lang ja | saga --summary --lang ja

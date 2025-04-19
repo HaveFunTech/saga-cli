@@ -5,7 +5,7 @@ Golangで書かれたコマンドラインインターフェースです。
 ## 特徴
 
 - **複数のLLMサポート**: OpenAI（GPT-3.5/GPT-4）、AnthropicのClaude（Claude-3シリーズ）、GoogleのGemini（Gemini-2.5-pro）をサポート
-- **多様な機能**: 翻訳、要約、解説、検索など、さまざまな機能を提供
+- **多様な機能**: 翻訳、要約、解説、検索、カスタムメッセージなど、さまざまな機能を提供
 - **柔軟な入力**: ファイルパスまたは標準入力からテキストを受け付け
 - **多言語対応**: 出力言語を自由に指定可能
 
@@ -116,6 +116,7 @@ $ saga [オプション]
 --summary      # 要約モード
 --explanation  # 解説モード
 --search       # 検索モード
+--message      # カスタムメッセージモード（特定の指示を送信）
 --lang [言語コード]  # 出力言語の指定（例: ja, en, fr, zh など）
 ```
 
@@ -133,6 +134,12 @@ $ cat code.py | saga --explanation --lang ja
 
 # 特定のトピックについて検索
 $ echo "量子コンピューティングの基本原理" | saga --search --lang ja
+
+# JSONデータからnameフィールドの値を抽出
+$ cat document.json | saga --message "nameの値を取り出して" --lang ja
+
+# CSVファイルの年齢列の平均を計算
+$ cat document.csv | saga --message "年齢の列の平均を計算して" --lang ja
 
 # 英語のドキュメントを翻訳して日本語で要約
 $ cat english_doc.txt | saga --translation --lang ja | saga --summary --lang ja
