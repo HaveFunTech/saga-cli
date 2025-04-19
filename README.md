@@ -112,12 +112,12 @@ Enter your text...
 ### Main Options
 
 ```bash
---translation  # Translation mode
---summary      # Summarization mode
---explanation  # Explanation mode
---search       # Search mode
---message      # Custom message mode (send specific instructions)
---lang [language_code]  # Specify output language (e.g., en, ja, fr, zh, etc.)
+-t, --translation  # Translation mode
+-s, --summary      # Summarization mode
+-e, --explanation  # Explanation mode
+-S, --search       # Search mode
+-m, --message      # Custom message mode (send specific instructions)
+-l, --lang [language_code]  # Specify output language (e.g., en, ja, fr, zh, etc.)
 ```
 
 ### Usage Examples
