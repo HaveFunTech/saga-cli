@@ -35,12 +35,12 @@ var (
 
 func init() {
 	// フラグの設定
-	RootCmd.PersistentFlags().BoolVar(&isTranslation, "translation", false, "入力されたテキストを翻訳します")
-	RootCmd.PersistentFlags().BoolVar(&isSummary, "summary", false, "入力されたテキストを要約します")
-	RootCmd.PersistentFlags().BoolVar(&isExplanation, "explanation", false, "入力されたテキストを解説します")
-	RootCmd.PersistentFlags().BoolVar(&isSearch, "search", false, "入力されたテキストに基づいて情報を検索します")
-	RootCmd.PersistentFlags().StringVar(&messageFlag, "message", "", "入力データに対して実行したい操作を指定します")
-	RootCmd.PersistentFlags().StringVar(&langFlag, "lang", "en", "出力言語を指定します（例: en, ja, fr）")
+	RootCmd.PersistentFlags().BoolVarP(&isTranslation, "translation", "t", false, "入力されたテキストを翻訳します")
+	RootCmd.PersistentFlags().BoolVarP(&isSummary, "summary", "s", false, "入力されたテキストを要約します") 
+	RootCmd.PersistentFlags().BoolVarP(&isExplanation, "explanation", "e", false, "入力されたテキストを解説します")
+	RootCmd.PersistentFlags().BoolVarP(&isSearch, "search", "S", false, "入力されたテキストに基づいて情報を検索します")
+	RootCmd.PersistentFlags().StringVarP(&messageFlag, "message", "m", "", "入力データに対して実行したい操作を指定します")
+	RootCmd.PersistentFlags().StringVarP(&langFlag, "lang", "l", "en", "出力言語を指定します（例: en, ja, fr）")
 
 	// 環境変数の設定を読み込む
 	viper.AutomaticEnv()
