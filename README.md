@@ -1,10 +1,10 @@
 # SaGaCLI
 
-SaGaCLI is a simple yet powerful command-line interface for leveraging Large Language Models (LLMs). It can use OpenAI's GPT-3.5/GPT-4 or Anthropic's Claude models to provide translation, summarization, explanation, and search capabilities for text.
+SaGaCLI is a simple yet powerful command-line interface for leveraging Large Language Models (LLMs). It can use OpenAI's GPT-3.5/GPT-4, Anthropic's Claude models, or Google's Gemini models to provide translation, summarization, explanation, and search capabilities for text.
 
 ## Features
 
-- **Multiple LLM Support**: Use either OpenAI (GPT-3.5/GPT-4) or Claude (Anthropic) models
+- **Multiple LLM Support**: Use OpenAI (GPT-3.5/GPT-4), Claude (Anthropic), or Gemini (Google) models
 - **Diverse Functions**: Translation, summarization, explanation, search, and more
 - **Flexible Input**: Accept text from file paths or standard input
 - **Multilingual Support**: Specify any target language for output
@@ -44,7 +44,7 @@ $ make install  # Installs to your system
 
 ## Detailed Configuration
 
-SaGaCLI can use either OpenAI's GPT-3.5/GPT-4 or Anthropic's Claude models. Set the appropriate environment variables based on the service you want to use.
+SaGaCLI can use OpenAI's GPT-3.5/GPT-4, Anthropic's Claude models, or Google's Gemini models. Set the appropriate environment variables based on the service you want to use.
 
 ### Using OpenAI API
 
@@ -76,6 +76,18 @@ export OPENAI_API_TYPE=claude  # Set API type to claude
 # Optional settings
 export CLAUDE_API_MODEL=claude-3-haiku-20240307  # Model to use (default)
 # Available models: claude-3-opus-20240229, claude-3-sonnet-20240229, claude-3-haiku-20240307, etc.
+```
+
+### Using Google Gemini API
+
+```bash
+# Required settings
+export GEMINI_API_KEY=your-gemini-api-key  # Your Gemini API key
+export OPENAI_API_TYPE=gemini  # Set API type to gemini
+
+# Optional settings
+export GEMINI_API_MODEL=gemini-1.5-pro  # Model to use (default)
+# Also available: gemini-1.5-flash, etc.
 ```
 
 You can check your current settings by running the `saga env` command.
@@ -138,7 +150,7 @@ $ saga examples
 ### API Key Not Set Error
 
 ```
-Error: OPENAI_API_KEY or CLAUDE_API_KEY is not set
+Error: OPENAI_API_KEY or CLAUDE_API_KEY or GEMINI_API_KEY is not set
 ```
 
 If you see this error, check that your environment variables are correctly set.
@@ -153,6 +165,9 @@ export OPENAI_API_MODEL=gpt-4
 
 # For Claude
 export CLAUDE_API_MODEL=claude-3-opus-20240229
+
+# For Gemini
+export GEMINI_API_MODEL=gemini-1.5-pro
 ```
 
 ## Getting Help

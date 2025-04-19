@@ -21,6 +21,8 @@ func GetLLM() (LLM, error) {
 		return NewOpenAIClient()
 	case "claude":
 		return NewClaudeClient()
+	case "gemini":
+		return NewGeminiClient()
 	default:
 		return nil, errors.New("サポートされていないAPI_TYPEです: " + apiType)
 	}

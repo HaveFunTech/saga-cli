@@ -4,7 +4,7 @@ Golangで書かれたコマンドラインインターフェースです。
 
 ## 特徴
 
-- **複数のLLMサポート**: OpenAI（GPT-3.5/GPT-4）とAnthropicのClaude（Claude-3シリーズ）の両方をサポート
+- **複数のLLMサポート**: OpenAI（GPT-3.5/GPT-4）、AnthropicのClaude（Claude-3シリーズ）、GoogleのGemini（Gemini-2.5-pro）をサポート
 - **多様な機能**: 翻訳、要約、解説、検索など、さまざまな機能を提供
 - **柔軟な入力**: ファイルパスまたは標準入力からテキストを受け付け
 - **多言語対応**: 出力言語を自由に指定可能
@@ -44,7 +44,7 @@ $ make install  # システムにインストールします
 
 ## 詳細な環境設定
 
-SaGaCLIは、OpenAIのGPT-3.5/GPT-4またはAnthropicのClaudeモデルを使用できます。使用したいサービスに応じて適切な環境変数を設定してください。
+SaGaCLIは、OpenAIのGPT-3.5/GPT-4、AnthropicのClaudeモデル、またはGoogleのGeminiモデルを使用できます。使用したいサービスに応じて適切な環境変数を設定してください。
 
 ### OpenAI APIを使用する場合
 
@@ -76,6 +76,18 @@ export OPENAI_API_TYPE=claude  # APIタイプをclaudeに設定
 # オプションの設定
 export CLAUDE_API_MODEL=claude-3-haiku-20240307  # 使用するモデル（デフォルト値）
 # 利用可能なモデル: claude-3-opus-20240229, claude-3-sonnet-20240229, claude-3-haiku-20240307 など
+```
+
+### Google Gemini APIを使用する場合
+
+```bash
+# 必須の設定
+export GEMINI_API_KEY=your-gemini-api-key  # Gemini APIキー
+export OPENAI_API_TYPE=gemini  # APIタイプをgeminiに設定
+
+# オプションの設定
+export GEMINI_API_MODEL=gemini-1.5-pro  # 使用するモデル（デフォルト値）
+# 利用可能なその他のモデル: gemini-1.5-flash など
 ```
 
 環境変数の設定が確認できない場合は、`saga env`コマンドを実行して現在の設定を確認できます。
@@ -138,7 +150,7 @@ $ saga examples
 ### APIキーが設定されていないエラー
 
 ```
-Error: OPENAI_API_KEY または CLAUDE_API_KEY が設定されていません
+Error: OPENAI_API_KEY または CLAUDE_API_KEY または GEMINI_API_KEY が設定されていません
 ```
 
 上記のエラーが発生した場合は、環境変数が正しく設定されているか確認してください。
@@ -153,6 +165,9 @@ export OPENAI_API_MODEL=gpt-4
 
 # Claudeの場合
 export CLAUDE_API_MODEL=claude-3-opus-20240229
+
+# Geminiの場合
+export GEMINI_API_MODEL=gemini-1.5-pro
 ```
 
 ## ヘルプの表示
