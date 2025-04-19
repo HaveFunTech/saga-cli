@@ -36,7 +36,7 @@ var (
 func init() {
 	// フラグの設定
 	RootCmd.PersistentFlags().BoolVarP(&isTranslation, "translation", "t", false, "入力されたテキストを翻訳します")
-	RootCmd.PersistentFlags().BoolVarP(&isSummary, "summary", "s", false, "入力されたテキストを要約します") 
+	RootCmd.PersistentFlags().BoolVarP(&isSummary, "summary", "s", false, "入力されたテキストを要約します")
 	RootCmd.PersistentFlags().BoolVarP(&isExplanation, "explanation", "e", false, "入力されたテキストを解説します")
 	RootCmd.PersistentFlags().BoolVarP(&isSearch, "search", "S", false, "入力されたテキストに基づいて情報を検索します")
 	RootCmd.PersistentFlags().StringVarP(&messageFlag, "message", "m", "", "入力データに対して実行したい操作を指定します")
