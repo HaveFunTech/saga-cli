@@ -1,0 +1,48 @@
+# バイナリファイル
+/bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# テストバイナリ
+*.test
+
+# カバレッジファイル
+*.out
+*.prof
+
+# 依存関係のキャッシュ
+/vendor/
+/go.work
+
+# OS固有のファイル
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# エディタ固有のファイル
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# ログファイル
+*.log
+
+# 環境変数ファイル
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# その他の一時ファイル
+/tmp/
+*.tmp
