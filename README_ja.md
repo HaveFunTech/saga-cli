@@ -112,12 +112,12 @@ $ saga [オプション]
 ### 主要なオプション
 
 ```bash
---translation  # 翻訳モード
---summary      # 要約モード
---explanation  # 解説モード
---search       # 検索モード
---message      # カスタムメッセージモード（特定の指示を送信）
---lang [言語コード]  # 出力言語の指定（例: ja, en, fr, zh など）
+-t, --translation  # 翻訳モード
+-s, --summary      # 要約モード
+-e, --explanation  # 解説モード
+-S, --search       # 検索モード
+-m, --message      # カスタムメッセージモード（特定の指示を送信）
+-l, --lang [言語コード]  # 出力言語の指定（例: ja, en, fr, zh など）
 ```
 
 ### 使用例
