@@ -8,6 +8,7 @@ SaGaCLI is a simple yet powerful command-line interface for leveraging Large Lan
 - **Diverse Functions**: Translation, summarization, explanation, search, custom messages, and more
 - **Flexible Input**: Accept text from file paths or standard input
 - **Multilingual Support**: Specify any target language for output
+- **Context File/Directory Support**: Use `--file/-f` to specify multiple files, or `--dir/-d` to specify a directory (recursively includes all files) as context for the LLM
 
 ## Installation
 
@@ -118,6 +119,8 @@ Enter your text...
 -S, --search       # Search mode
 -m, --message      # Custom message mode (send specific instructions)
 -l, --lang [language_code]  # Specify output language (e.g., en, ja, fr, zh, etc.)
+-f, --file [file_path]  # Specify files to use as context (can specify multiple)
+-d, --dir [directory_path]  # Specify directory to use as context (recursively includes all files)
 ```
 
 ### Usage Examples
@@ -143,6 +146,12 @@ $ cat document.csv | saga --message "Calculate the average of the age column" --
 
 # Translate a document to Japanese then summarize it
 $ cat english_doc.txt | saga --translation --lang ja | saga --summary --lang ja
+
+# Use all files in a folder as context and request SQL optimization
+$ cat SlowQuery.log | saga -d docs -m 'Create an appropriate INDEX' -l sql
+
+# Use multiple files as context and convert CSV according to a rule
+$ cat domain.csv | saga -f convert_rule.md -m 'Convert CSV to JSON according to the specified rule'
 ```
 
 ### View Examples

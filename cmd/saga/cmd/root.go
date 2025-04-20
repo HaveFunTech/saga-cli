@@ -23,6 +23,9 @@ var (
 	messageFlag   string
 	langFlag      string
 
+	fileFlags []string
+	dirFlags  []string
+
 	// RootCmd はCLIツールのルートコマンド
 	RootCmd = &cobra.Command{
 		Use:   "saga",
@@ -41,14 +44,80 @@ func init() {
 	RootCmd.PersistentFlags().BoolVarP(&isSearch, "search", "S", false, "入力されたテキストに基づいて情報を検索します")
 	RootCmd.PersistentFlags().StringVarP(&messageFlag, "message", "m", "", "入力データに対して実行したい操作を指定します")
 	RootCmd.PersistentFlags().StringVarP(&langFlag, "lang", "l", "en", "出力言語を指定します（例: en, ja, fr）")
+	RootCmd.PersistentFlags().StringSliceVarP(&fileFlags, "file", "f", nil, "コンテキストとして利用するファイルを指定します（複数指定可）")
+	RootCmd.PersistentFlags().StringSliceVarP(&dirFlags, "dir", "d", nil, "コンテキストとして利用するディレクトリを指定します（再帰的に全ファイルを読み込み）")
 
 	// 環境変数の設定を読み込む
 	viper.AutomaticEnv()
 }
 
+// ディレクトリ内の全ファイルを再帰的に取得
+func getAllFilesRecursive(dir string) ([]string, error) {
+	var files []string
+	err := walkDir(dir, &files)
+	return files, err
+}
+
+func walkDir(dir string, files *[]string) error {
+	d, err := os.ReadDir(dir)
+	if err != nil {
+		return err
+	}
+	for _, entry := range d {
+		path := dir + string(os.PathSeparator) + entry.Name()
+		if entry.IsDir() {
+			if err := walkDir(path, files); err != nil {
+				return err
+			}
+		} else {
+			*files = append(*files, path)
+		}
+	}
+	return nil
+}
+
+// ファイルリストから内容を結合
+func readFilesContent(filePaths []string) (string, error) {
+	var buf bytes.Buffer
+	for _, f := range filePaths {
+		content, err := services.ReadFileContent(f)
+		if err != nil {
+			return "", err
+		}
+		buf.WriteString("【ファイル: " + f + "】\n")
+		buf.WriteString(content)
+		buf.WriteString("\n\n")
+	}
+	return buf.String(), nil
+}
+
 func rootRun(cmd *cobra.Command, args []string) {
 	var content string
 	var err error
+
+	// --- コンテキストファイル・ディレクトリの内容を先に読み込む ---
+	var contextContents string
+	var contextFiles []string
+	if len(fileFlags) > 0 {
+		contextFiles = append(contextFiles, fileFlags...)
+	}
+	if len(dirFlags) > 0 {
+		for _, dir := range dirFlags {
+			files, err := getAllFilesRecursive(dir)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "ディレクトリの読み取りに失敗しました: %v\n", err)
+				os.Exit(1)
+			}
+			contextFiles = append(contextFiles, files...)
+		}
+	}
+	if len(contextFiles) > 0 {
+		contextContents, err = readFilesContent(contextFiles)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "コンテキストファイルの読み取りに失敗しました: %v\n", err)
+			os.Exit(1)
+		}
+	}
 
 	// 標準入力が端末から来ているか確認
 	stat, _ := os.Stdin.Stat()
@@ -80,6 +149,11 @@ func rootRun(cmd *cobra.Command, args []string) {
 			fmt.Fprintf(os.Stderr, "ファイルの読み取りに失敗しました: %v\n", err)
 			os.Exit(1)
 		}
+	}
+
+	// --- コンテキストをuserPromptの先頭に付与 ---
+	if contextContents != "" {
+		content = "【コンテキスト】\n" + contextContents + "\n【入力データ】\n" + content
 	}
 
 	// LLMクライアントの取得

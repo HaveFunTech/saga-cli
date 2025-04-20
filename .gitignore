@@ -1,5 +1,6 @@
 # バイナリファイル
 ./bin/
+bin/saga
 *.exe
 *.exe~
 *.dll
