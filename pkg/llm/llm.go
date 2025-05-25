@@ -23,6 +23,10 @@ func GetLLM() (LLM, error) {
 		return NewClaudeClient()
 	case "gemini":
 		return NewGeminiClient()
+	case "mcp":
+		mcpConfigFile := os.Getenv("MCP_CONFIG_FILE")
+		mcpServerName := os.Getenv("MCP_SERVER_NAME")
+		return NewMCPClient(mcpConfigFile, mcpServerName)
 	default:
 		return nil, errors.New("サポートされていないAPI_TYPEです: " + apiType)
 	}

@@ -1,14 +1,15 @@
 # SaGaCLI
 
-SaGaCLI is a simple yet powerful command-line interface for leveraging Large Language Models (LLMs). It can use OpenAI's GPT-3.5/GPT-4, Anthropic's Claude models, or Google's Gemini models to provide translation, summarization, explanation, and search capabilities for text.
+SaGaCLI is a simple yet powerful command-line interface for leveraging Large Language Models (LLMs). It can use OpenAI's GPT-3.5/GPT-4, Anthropic's Claude models, Google's Gemini models, or Model Context Protocol (MCP) servers to provide translation, summarization, explanation, and search capabilities for text.
 
 ## Features
 
-- **Multiple LLM Support**: Use OpenAI (GPT-3.5/GPT-4), Claude (Anthropic), or Gemini (Google) models
+- **Multiple LLM Support**: Use OpenAI (GPT-3.5/GPT-4), Claude (Anthropic), Gemini (Google), or MCP server models
 - **Diverse Functions**: Translation, summarization, explanation, search, custom messages, and more
 - **Flexible Input**: Accept text from file paths or standard input
 - **Multilingual Support**: Specify any target language for output
 - **Context File/Directory Support**: Use `--file/-f` to specify multiple files, or `--dir/-d` to specify a directory (recursively includes all files) as context for the LLM
+- **MCP Integration**: Integrate with Model Context Protocol servers for specialized capabilities
 
 ## Installation
 
@@ -45,7 +46,7 @@ $ make install  # Installs to your system
 
 ## Detailed Configuration
 
-SaGaCLI can use OpenAI's GPT-3.5/GPT-4, Anthropic's Claude models, or Google's Gemini models. Set the appropriate environment variables based on the service you want to use.
+SaGaCLI can use OpenAI's GPT-3.5/GPT-4, Anthropic's Claude models, Google's Gemini models, or MCP servers. Set the appropriate environment variables based on the service you want to use.
 
 ### Using OpenAI API
 
@@ -91,6 +92,47 @@ export GEMINI_API_MODEL=gemini-1.5-pro  # Model to use (default)
 # Also available: gemini-1.5-flash, etc.
 ```
 
+### Using MCP (Model Context Protocol) Servers
+
+To use MCP servers, you can either set environment variables or use command-line flags.
+
+```bash
+# Using environment variables
+export OPENAI_API_TYPE=mcp
+export MCP_CONFIG_FILE=/path/to/mcp-config.json
+export MCP_SERVER_NAME=server-name  # Server name from your config file
+
+# Or using command-line flags
+saga --mcp-config /path/to/mcp-config.json --mcp-server server-name [other options]
+```
+
+Example MCP configuration file (JSON format):
+
+```json
+{
+  "mcpServers": {
+    "google-maps": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-google-maps"
+      ],
+      "env": {
+        "GOOGLE_MAPS_API_KEY": "<YOUR_API_KEY>"
+      }
+    },
+    "calculator": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-calculator"
+      ],
+      "env": {}
+    }
+  }
+}
+```
+
 You can check your current settings by running the `saga env` command.
 
 ## Detailed Usage
@@ -113,14 +155,16 @@ Enter your text...
 ### Main Options
 
 ```bash
--t, --translation  # Translation mode
--s, --summary      # Summarization mode
--e, --explanation  # Explanation mode
--S, --search       # Search mode
--m, --message      # Custom message mode (send specific instructions)
+-t, --translation   # Translation mode
+-s, --summary       # Summarization mode
+-e, --explanation   # Explanation mode
+-S, --search        # Search mode
+-m, --message       # Custom message mode (send specific instructions)
 -l, --lang [language_code]  # Specify output language (e.g., en, ja, fr, zh, etc.)
 -f, --file [file_path]  # Specify files to use as context (can specify multiple)
 -d, --dir [directory_path]  # Specify directory to use as context (recursively includes all files)
+--mcp-config [file_path]  # Specify MCP configuration file path
+--mcp-server [server_name]  # Specify MCP server name to use
 ```
 
 ### Usage Examples
@@ -152,6 +196,12 @@ $ cat SlowQuery.log | saga -d docs -m 'Create an appropriate INDEX' -l sql
 
 # Use multiple files as context and convert CSV according to a rule
 $ cat domain.csv | saga -f convert_rule.md -m 'Convert CSV to JSON according to the specified rule'
+
+# Use MCP server with Google Maps capability
+$ echo "Distance from Tokyo to Osaka" | saga --mcp-config ./mcp-config.json --mcp-server google-maps --message "Provide distance and travel time" --lang en
+
+# Use MCP server with calculator capability
+$ echo "123 * 456 / 7.89 = ?" | saga --mcp-config ./mcp-config.json --mcp-server calculator --message "Calculate this" --lang en
 ```
 
 ### View Examples

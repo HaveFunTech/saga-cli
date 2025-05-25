@@ -45,7 +45,7 @@ $ make install  # システムにインストールします
 
 ## 詳細な環境設定
 
-SaGaCLIは、OpenAIのGPT-3.5/GPT-4、AnthropicのClaudeモデル、またはGoogleのGeminiモデルを使用できます。使用したいサービスに応じて適切な環境変数を設定してください。
+SaGaCLIは、OpenAIのGPT-3.5/GPT-4、AnthropicのClaudeモデル、GoogleのGeminiモデル、またはMCPサーバーを使用できます。使用したいサービスに応じて適切な環境変数を設定してください。
 
 ### OpenAI APIを使用する場合
 
@@ -91,6 +91,47 @@ export GEMINI_API_MODEL=gemini-1.5-pro  # 使用するモデル（デフォル�
 # 利用可能なその他のモデル: gemini-1.5-flash など
 ```
 
+### MCP (Model Context Protocol) サーバーを使用する場合
+
+MCPサーバーを使用するには、環境変数を設定するか、コマンドラインフラグを使用します。
+
+```bash
+# 環境変数を使用する場合
+export OPENAI_API_TYPE=mcp
+export MCP_CONFIG_FILE=/path/to/mcp-config.json
+export MCP_SERVER_NAME=server-name  # 設定ファイル内のサーバー名
+
+# または、コマンドラインフラグを使用する場合
+saga --mcp-config /path/to/mcp-config.json --mcp-server server-name [その他のオプション]
+```
+
+MCP設定ファイルの例（JSON形式）:
+
+```json
+{
+  "mcpServers": {
+    "google-maps": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-google-maps"
+      ],
+      "env": {
+        "GOOGLE_MAPS_API_KEY": "<YOUR_API_KEY>"
+      }
+    },
+    "calculator": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-calculator"
+      ],
+      "env": {}
+    }
+  }
+}
+```
+
 環境変数の設定が確認できない場合は、`saga env`コマンドを実行して現在の設定を確認できます。
 
 ## 使い方の詳細
@@ -113,14 +154,16 @@ $ saga [オプション]
 ### 主要なオプション
 
 ```bash
--t, --translation  # 翻訳モード
--s, --summary      # 要約モード
--e, --explanation  # 解説モード
--S, --search       # 検索モード
--m, --message      # カスタムメッセージモード（特定の指示を送信）
+-t, --translation   # 翻訳モード
+-s, --summary       # 要約モード
+-e, --explanation   # 解説モード
+-S, --search        # 検索モード
+-m, --message       # カスタムメッセージモード（特定の指示を送信）
 -l, --lang [言語コード]  # 出力言語の指定（例: ja, en, fr, zh など）
 -f, --file [ファイルパス]  # コンテキストとして利用するファイルを指定（複数指定可）
 -d, --dir [ディレクトリパス]  # コンテキストとして利用するディレクトリを指定（再帰的に全ファイルを読み込み）
+--mcp-config [ファイルパス]  # MCP設定ファイルのパスを指定
+--mcp-server [サーバー名]   # 使用するMCPサーバー名を指定
 ```
 
 ### 使用例
@@ -152,6 +195,12 @@ $ cat SlowQuery.log | saga -d docs -m '適切なINDEXを作成して' -l sql
 
 # 複数ファイルをコンテキストとして指定し、CSV変換ルールに従って変換
 $ cat domain.csv | saga -f convert_rule.md -m 'CSVを指定のruleに沿ってJSONに変換して'
+
+# MCPサーバーを使用して地図関連の情報を取得
+$ echo "東京から大阪までの距離を教えて" | saga --mcp-config ./mcp-config.json --mcp-server google-maps --message "距離と所要時間を教えて" --lang ja
+
+# 計算機能を持つMCPサーバーを使用して数学的な問題を解決
+$ echo "123 * 456 / 7.89 の計算結果は？" | saga --mcp-config ./mcp-config.json --mcp-server calculator --message "計算して" --lang ja
 ```
 
 ### 使用例の一覧表示

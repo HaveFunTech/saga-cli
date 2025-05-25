@@ -25,13 +25,15 @@ var (
 
 	fileFlags []string
 	dirFlags  []string
+	mcpConfigFlag string
+	mcpServerFlag string
 
 	// RootCmd はCLIツールのルートコマンド
 	RootCmd = &cobra.Command{
 		Use:   "saga",
 		Short: "SaGaCLI - LLMを活用するコマンドラインツール",
 		Long: `SaGaCLI は翻訳、要約、解説、検索などのタスクにLLMを活用するコマンドラインツールです。
-環境変数を設定して、OpenAIやClaudeのAPIを利用することができます。`,
+環境変数を設定して、OpenAI、Claude、Gemini、またはMCPサーバーのAPIを利用することができます。`,
 		Run: rootRun,
 	}
 )
@@ -46,6 +48,8 @@ func init() {
 	RootCmd.PersistentFlags().StringVarP(&langFlag, "lang", "l", "en", "出力言語を指定します（例: en, ja, fr）")
 	RootCmd.PersistentFlags().StringSliceVarP(&fileFlags, "file", "f", nil, "コンテキストとして利用するファイルを指定します（複数指定可）")
 	RootCmd.PersistentFlags().StringSliceVarP(&dirFlags, "dir", "d", nil, "コンテキストとして利用するディレクトリを指定します（再帰的に全ファイルを読み込み）")
+	RootCmd.PersistentFlags().StringVar(&mcpConfigFlag, "mcp-config", "", "MCP設定ファイルのパスを指定します")
+	RootCmd.PersistentFlags().StringVar(&mcpServerFlag, "mcp-server", "", "使用するMCPサーバー名を指定します")
 
 	// 環境変数の設定を読み込む
 	viper.AutomaticEnv()
@@ -94,6 +98,13 @@ func readFilesContent(filePaths []string) (string, error) {
 func rootRun(cmd *cobra.Command, args []string) {
 	var content string
 	var err error
+
+	// MCP設定があれば環境変数に設定
+	if mcpConfigFlag != "" {
+		os.Setenv("OPENAI_API_TYPE", "mcp")
+		os.Setenv("MCP_CONFIG_FILE", mcpConfigFlag)
+		os.Setenv("MCP_SERVER_NAME", mcpServerFlag)
+	}
 
 	// --- コンテキストファイル・ディレクトリの内容を先に読み込む ---
 	var contextContents string
